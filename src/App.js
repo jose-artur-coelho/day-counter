@@ -57,7 +57,7 @@ export default function App() {
         {count === 0
           ? "Hoje é "
           : count > 0
-          ? `daqui ${count} dia(s) será `
+          ? `Daqui ${count} dia(s) será `
           : `Há ${Math.abs(count)} dia(s) atrás era  `}{" "}
         {weekDays[date.getDay()]}, {date.getDate()} de {months[date.getMonth()]}{" "}
         de {date.getFullYear()}
