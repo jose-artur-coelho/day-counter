@@ -13,26 +13,37 @@ export default function App() {
     "Set",
     "Out",
     "Nov",
-    "Dez"
+    "Dez",
   ];
 
-  const [step, setStep] = React.useState(1);
-  const [count, setCount] = React.useState(0);
+  function reducerCount(state, action) {
+    if (action.type === "inc") return state + step;
+    if (action.type === "dec") return state - step;
+  }
+
+  function reducerStep(state, action) {
+    if (action.type === "inc") return state + 1;
+    if (action.type === "dec" && state >= 2) return state - 1;
+    return state;
+  }
+
+  const [step, dispatchStep] = React.useReducer(reducerStep, 1);
+  const [count, dispatchCount] = React.useReducer(reducerCount, 0);
 
   function handleMinusCountClick() {
-    setCount((c) => c - step);
+    dispatchCount({ type: "dec" });
   }
 
   function handlePlusCountClick() {
-    setCount((c) => c + step);
+    dispatchCount({ type: "inc" });
   }
 
   function handleMinusStepClick() {
-    if (step >= 2) setStep((s) => s - 1);
+    dispatchStep({ type: "dec" });
   }
 
   function handlePlusStepClick() {
-    setStep((s) => s + 1);
+    dispatchStep({ type: "inc" });
   }
 
   const date = new Date();
@@ -72,7 +83,7 @@ function Buttons({ text, counter, onPlusClick, onMinusClick }) {
       style={{
         display: "flex",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
       }}
     >
       <button onClick={onMinusClick}>-</button>
