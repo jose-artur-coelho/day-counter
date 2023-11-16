@@ -1,75 +1,61 @@
 import React from "react";
+const months = [
+  "Jan",
+  "Fev",
+  "Mar",
+  "Abr",
+  "Mai",
+  "Jun",
+  "Jul",
+  "Ago",
+  "Set",
+  "Out",
+  "Nov",
+  "Dez",
+];
+const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
+
+const initialState = { step: 1, count: 0 };
+
 export default function App() {
-  const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
-  const months = [
-    "Jan",
-    "Fev",
-    "Mar",
-    "Abr",
-    "Mai",
-    "Jun",
-    "Jul",
-    "Ago",
-    "Set",
-    "Out",
-    "Nov",
-    "Dez",
-  ];
-
-  function reducerCount(state, action) {
-    if (action.type === "inc") return state + step;
-    if (action.type === "dec") return state - step;
+  function reducer(state, action) {
+    switch (action.type) {
+      case "incStep":
+        return { ...state, step: state.step + 1 };
+      case "decStep":
+        return { ...state, step: state.step > 1 ? state.step - 1 : state.step };
+      case "incCount":
+        return { ...state, count: state.count + state.step };
+      case "decCount":
+        return { ...state, count: state.count - state.step };
+    }
   }
 
-  function reducerStep(state, action) {
-    if (action.type === "inc") return state + 1;
-    if (action.type === "dec" && state >= 2) return state - 1;
-    return state;
-  }
-
-  const [step, dispatchStep] = React.useReducer(reducerStep, 1);
-  const [count, dispatchCount] = React.useReducer(reducerCount, 0);
-
-  function handleMinusCountClick() {
-    dispatchCount({ type: "dec" });
-  }
-
-  function handlePlusCountClick() {
-    dispatchCount({ type: "inc" });
-  }
-
-  function handleMinusStepClick() {
-    dispatchStep({ type: "dec" });
-  }
-
-  function handlePlusStepClick() {
-    dispatchStep({ type: "inc" });
-  }
+  const [{ step, count }, dispatch] = React.useReducer(reducer, initialState);
 
   const date = new Date();
   date.setDate(date.getDate() + count);
 
-  console.log(date);
   return (
     <div style={{ fontFamily: "sans-serif", fontSize: "1.5rem" }}>
       <Buttons
         text="Passo"
         counter={step}
-        onPlusClick={handlePlusStepClick}
-        onMinusClick={handleMinusStepClick}
+        onPlusClick={() => dispatch({ type: "incStep" })}
+        onMinusClick={() => dispatch({ type: "decStep" })}
       />
       <Buttons
         text="Contador"
         counter={count}
-        onMinusClick={handleMinusCountClick}
-        onPlusClick={handlePlusCountClick}
+        onPlusClick={() => dispatch({ type: "incCount" })}
+        onMinusClick={() => dispatch({ type: "decCount" })}
       />
       <p style={{ textAlign: "center" }}>
         {count === 0
           ? "Hoje é "
           : count > 0
           ? `Daqui ${count} dia(s) será `
-          : `Há ${Math.abs(count)} dia(s) atrás era  `}{" "}
+          : `${Math.abs(count)} dia(s) atrás era  `}{" "}
         {weekDays[date.getDay()]}, {date.getDate()} de {months[date.getMonth()]}{" "}
         de {date.getFullYear()}
       </p>
